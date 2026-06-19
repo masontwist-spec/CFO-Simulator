@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Allocator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- Loading overlay -->
+<div id="loading-overlay" class="hidden">
+  <div class="loading-inner">
+    <div class="spinner"></div>
+    <div class="loading-msg">Consulting the board…</div>
+  </div>
+</div>
+
+<!-- ── Intro screen ── -->
+<div id="screen-intro">
+  <div class="intro-header">
+    <h1>The Allocator</h1>
+  </div>
+  <p class="intro-sub">You are the CEO. You have free cash flow and choices to make. Choose your company.</p>
+  <div id="archetype-select" class="archetype-grid"></div>
+</div>
+
+<!-- ── Game screen ── -->
+<div id="screen-game" class="hidden">
+
+  <div id="topbar">
+    <div class="topbar-left">
+      <span id="company-name">—</span>
+      <span id="year-indicator">Year 1</span>
+    </div>
+    <div class="topbar-right">
+      <span class="price-label">Implied Price</span>
+      <span id="stock-price">—</span>
+    </div>
+  </div>
+
+  <div class="game-body">
+
+    <!-- Left: company snapshot -->
+    <div id="snapshot-panel">
+
+      <div class="section-label">Income Statement</div>
+      <div class="metrics-grid">
+        <div class="metric-cell"><span class="metric-label">Revenue</span><span class="metric-value" id="m-revenue">—</span></div>
+        <div class="metric-cell"><span class="metric-label">EBITDA</span><span class="metric-value" id="m-ebitda">—</span></div>
+        <div class="metric-cell"><span class="metric-label">EBIT</span><span class="metric-value" id="m-ebit">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Interest Expense</span><span class="metric-value" id="m-interest">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Net Income</span><span class="metric-value" id="m-net-income">—</span></div>
+        <div class="metric-cell"><span class="metric-label">EPS</span><span class="metric-value" id="m-eps">—</span></div>
+      </div>
+
+      <div class="section-label">Cash Flow</div>
+      <div class="metrics-grid">
+        <div class="metric-cell" style="grid-column: span 2"><span class="metric-label">Free Cash Flow (available to allocate)</span><span class="metric-value positive" id="m-fcf">—</span></div>
+      </div>
+
+      <div class="section-label">Balance Sheet</div>
+      <div class="metrics-grid">
+        <div class="metric-cell"><span class="metric-label">Cash</span><span class="metric-value" id="m-cash">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Debt</span><span class="metric-value" id="m-debt">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Net Debt</span><span class="metric-value" id="m-net-debt">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Net Debt / EBITDA</span><span class="metric-value" id="m-debt-ebitda">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Interest Coverage</span><span class="metric-value" id="m-coverage">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Shares Outstanding</span><span class="metric-value" id="m-shares">—</span></div>
+      </div>
+
+      <div class="section-label">Valuation</div>
+      <div class="metrics-grid">
+        <div class="metric-cell"><span class="metric-label">Enterprise Value</span><span class="metric-value" id="m-ev">—</span></div>
+        <div class="metric-cell"><span class="metric-label">Equity Value</span><span class="metric-value" id="m-equity">—</span></div>
+      </div>
+
+    </div>
+
+    <!-- Right top: allocation panel -->
+    <div id="allocation-panel">
+      <div class="section-label">Capital Allocation</div>
+
+      <div class="fcf-header">
+        <span class="fcf-label">FCF Available</span>
+        <span class="fcf-amount" id="fcf-available">—</span>
+      </div>
+
+      <div class="allocation-row">
+        <span class="alloc-label">Reinvestment</span>
+        <input type="range" class="alloc-slider" id="input-reinvest" min="0" value="0" step="1" />
+        <span class="alloc-display" id="display-reinvest">$0M</span>
+      </div>
+      <div class="allocation-row">
+        <span class="alloc-label">Share Buybacks</span>
+        <input type="range" class="alloc-slider" id="input-buybacks" min="0" value="0" step="1" />
+        <span class="alloc-display" id="display-buybacks">$0M</span>
+      </div>
+      <div class="allocation-row">
+        <span class="alloc-label">Debt Paydown</span>
+        <input type="range" class="alloc-slider" id="input-debtPaydown" min="0" value="0" step="1" />
+        <span class="alloc-display" id="display-debtPaydown">$0M</span>
+      </div>
+      <div class="allocation-row">
+        <span class="alloc-label">Dividends</span>
+        <input type="range" class="alloc-slider" id="input-dividends" min="0" value="0" step="1" />
+        <span class="alloc-display" id="display-dividends">$0M</span>
+      </div>
+      <div class="allocation-row">
+        <span class="alloc-label">Acquisitions</span>
+        <input type="range" class="alloc-slider" id="input-acquisitions" min="0" value="0" step="1" />
+        <span class="alloc-display" id="display-acquisitions">$0M</span>
+      </div>
+
+      <div class="remaining-row">
+        <span class="remaining-label">Remaining (held as cash)</span>
+        <span id="fcf-remaining">—</span>
+      </div>
+
+      <div id="error-msg" class="hidden"></div>
+      <button class="btn-primary" id="submit-allocation">Submit Allocation →</button>
+    </div>
+
+    <!-- Right bottom: board commentary -->
+    <div id="board-panel">
+      <div class="section-label">Board Commentary</div>
+      <div id="board-feed"></div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ── Scorecard screen ── -->
+<div id="screen-scorecard" class="hidden">
+  <div class="scorecard-header">
+    <h1>CEO Scorecard</h1>
+    <div id="sc-company">—</div>
+  </div>
+
+  <div class="scorecard-grid">
+    <div class="sc-cell">
+      <span class="sc-label">Total Shareholder Return</span>
+      <span class="sc-value" id="sc-tsr">—</span>
+      <span class="sc-sub"><span id="sc-start-price">—</span> → <span id="sc-end-price">—</span></span>
+    </div>
+    <div class="sc-cell">
+      <span class="sc-label">EPS CAGR</span>
+      <span class="sc-value" id="sc-eps-cagr">—</span>
+      <span class="sc-sub"><span id="sc-start-eps">—</span> → <span id="sc-end-eps">—</span></span>
+    </div>
+    <div class="sc-cell">
+      <span class="sc-label">Debt Reduced</span>
+      <span class="sc-value" id="sc-debt-reduction">—</span>
+    </div>
+    <div class="sc-cell">
+      <span class="sc-label">Dividends Paid</span>
+      <span class="sc-value" id="sc-dividends">—</span>
+    </div>
+    <div class="sc-cell" style="grid-column: span 2">
+      <span class="sc-label">Total Buybacks</span>
+      <span class="sc-value" id="sc-buybacks">—</span>
+    </div>
+  </div>
+
+  <div class="verdict-block">
+    <div class="verdict-title">Board Final Verdict</div>
+    <div id="sc-verdict">Consulting the board…</div>
+  </div>
+
+  <div class="scorecard-actions">
+    <button class="btn-secondary" id="btn-play-again">Play Again</button>
+  </div>
+</div>
+
+<script src="config.js"></script>
+<script src="engine.js"></script>
+<script src="board.js"></script>
+<script src="ui.js"></script>
+<script src="game.js"></script>
+</body>
+</html>

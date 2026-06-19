@@ -1,0 +1,86 @@
+// Replace with your Anthropic API key
+const ANTHROPIC_API_KEY = 'YOUR_API_KEY_HERE';
+
+const ARCHETYPES = [
+  {
+    id: 'compounder',
+    name: 'Meridian Industrial',
+    tagline: 'Mature compounder. High margins, slow growth, fortress balance sheet.',
+    years: 7,
+    evMultiple: 10,
+    roic: 0.15,
+    interestRate: 0.05,
+    taxRate: 0.25,
+    maintenanceCapexRatio: 0.04, // % of revenue
+    baseGrowthRate: 0.03,        // organic revenue growth without reinvestment
+    acquisitionEbitdaYield: 0.09,
+    start: {
+      revenue: 1000,
+      ebitdaMargin: 0.25,
+      da: 50,
+      debt: 400,
+      cash: 150,
+      sharesOutstanding: 100,
+    },
+    boardPersonalities: {
+      cfo: 'pragmatic, conservative, always references leverage ratios and interest coverage',
+      boardMember: 'optimistic, growth-oriented, pushes for reinvestment and acquisitions',
+      independent: 'shareholder-focused, frequently mentions TSR and EPS accretion',
+    },
+    backstory: 'Meridian Industrial is a market-leading manufacturer of industrial components. Revenue growth has plateaued at low single digits, but margins are exceptional. The board is debating whether to return capital or invest for growth.',
+  },
+  {
+    id: 'turnaround',
+    name: 'Vantage Media Group',
+    tagline: 'Leveraged turnaround. Debt-heavy, improving operations, fragile.',
+    years: 7,
+    evMultiple: 7,
+    roic: 0.12,
+    interestRate: 0.075,
+    taxRate: 0.25,
+    maintenanceCapexRatio: 0.03,
+    baseGrowthRate: 0.02,
+    acquisitionEbitdaYield: 0.10,
+    start: {
+      revenue: 600,
+      ebitdaMargin: 0.18,
+      da: 30,
+      debt: 650,
+      cash: 60,
+      sharesOutstanding: 80,
+    },
+    boardPersonalities: {
+      cfo: 'stressed, laser-focused on liquidity and covenant compliance, risk-averse',
+      boardMember: 'private equity-trained, obsessed with deleveraging timeline and exit multiple',
+      independent: 'skeptical, asks hard questions about the debt load and interest coverage',
+    },
+    backstory: 'Vantage Media Group was taken private in a leveraged buyout three years ago. The operational turnaround is working — EBITDA is recovering — but the debt stack is crushing free cash flow. Every dollar of capital allocation matters.',
+  },
+  {
+    id: 'highgrowth',
+    name: 'Apex Software',
+    tagline: 'High-growth reinvestor. Modest current earnings, exceptional ROIC.',
+    years: 7,
+    evMultiple: 18,
+    roic: 0.28,
+    interestRate: 0.055,
+    taxRate: 0.21,
+    maintenanceCapexRatio: 0.02,
+    baseGrowthRate: 0.10,
+    acquisitionEbitdaYield: 0.08,
+    start: {
+      revenue: 300,
+      ebitdaMargin: 0.22,
+      da: 15,
+      debt: 100,
+      cash: 80,
+      sharesOutstanding: 60,
+    },
+    boardPersonalities: {
+      cfo: 'disciplined, focused on unit economics and CAC payback, wary of overinvestment',
+      boardMember: 'venture-trained, believes in aggressive reinvestment, dismissive of short-term EPS',
+      independent: 'balanced, asks about capital efficiency and when the company will return cash to shareholders',
+    },
+    backstory: 'Apex Software sells mission-critical workflow automation to mid-market enterprises. Net revenue retention is 115%. The market is large and underpenetrated, but competition is intensifying. The question is how hard to push the accelerator.',
+  },
+];
