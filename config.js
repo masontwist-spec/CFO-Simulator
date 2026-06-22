@@ -1,6 +1,3 @@
-// Replace with your Anthropic API key
-const ANTHROPIC_API_KEY = 'YOUR_API_KEY_HERE';
-
 const ARCHETYPES = [
   {
     id: 'compounder',

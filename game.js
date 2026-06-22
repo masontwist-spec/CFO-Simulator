@@ -27,23 +27,13 @@ function startGame(archetype) {
     </div>`;
 }
 
-async function handleAllocationSubmit(allocation) {
+function handleAllocationSubmit(allocation) {
   const { archetype, year, currentState, history } = state;
   const currentSnapshot = history[history.length - 1].snapshot;
 
-  // Record allocation against current year entry
   history[history.length - 1].allocation = allocation;
 
-  // Show loading, get board commentary
-  showLoading('Consulting the board…');
-  let commentary = '';
-  try {
-    commentary = await getBoardCommentary(archetype, year, currentSnapshot, allocation, history);
-  } catch (err) {
-    commentary = `[Board commentary unavailable: ${err.message}]`;
-  }
-  hideLoading();
-
+  const commentary = getStaticCommentary(archetype, currentSnapshot, allocation);
   renderBoardCommentary(commentary, year);
 
   // Check if game is over
@@ -74,43 +64,10 @@ function endGame() {
   getFinalBoardVerdict(scorecard);
 }
 
-async function getFinalBoardVerdict(scorecard) {
-  const { archetype } = state;
-  const prompt = `You are the board of ${archetype.name}. The CEO just completed a ${scorecard.years}-year tenure.
-
-Results:
-- TSR: ${scorecard.tsr.toFixed(1)}%
-- EPS CAGR: ${scorecard.epsCagr.toFixed(1)}%
-- Starting stock price: $${scorecard.first.stockPrice.toFixed(2)} → Ending: $${scorecard.last.stockPrice.toFixed(2)}
-- Starting EPS: $${scorecard.first.eps.toFixed(2)} → Ending: $${scorecard.last.eps.toFixed(2)}
-- Debt change: ${fmt(scorecard.debtReduction > 0 ? scorecard.debtReduction : scorecard.debtReduction)} (${scorecard.debtReduction > 0 ? 'reduced' : 'increased'})
-- Total dividends paid: ${fmt(scorecard.totalDividends)}
-- Total buybacks: ${fmt(scorecard.totalBuybacks)}
-
-Give a 3-4 sentence final verdict on this CEO's capital allocation track record. Be direct. Reference the numbers. Would you renew the contract?`;
-
-  try {
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {
-        'x-api-key': ANTHROPIC_API_KEY,
-        'anthropic-version': '2023-06-01',
-        'anthropic-dangerous-direct-browser-access': 'true',
-        'content-type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 300,
-        messages: [{ role: 'user', content: prompt }],
-      }),
-    });
-    const data = await response.json();
-    const verdict = data.content[0].text;
-    const el = document.getElementById('sc-verdict');
-    if (el) el.textContent = verdict;
-  } catch {
-    // Non-critical, skip silently
-  }
+function getFinalBoardVerdict(scorecard) {
+  const verdict = getStaticVerdict(scorecard);
+  const el = document.getElementById('sc-verdict');
+  if (el) el.textContent = verdict;
 }
 
 // Boot
